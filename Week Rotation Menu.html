@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Full Day of Eating – 2-Week Rotation</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Comic Sans MS", "Segoe Print", "Chalkboard SE", Arial, sans-serif;
+    background: #ffe97a;
+    padding: 20px;
+    display: flex; flex-direction: column; align-items: center;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .toolbar { margin-bottom: 14px; }
+  .toolbar button {
+    font-family: inherit; font-size: 16px;
+    padding: 10px 22px; border: none; border-radius: 10px;
+    background: #2f6bbf; color: #fff; cursor: pointer;
+  }
+  .toolbar button:hover { background: #1d4d94; }
+
+  .menu {
+    width: 100%; max-width: 1080px;
+    background: #fffbe0;
+    border: 6px solid #2f6bbf;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 6px 16px rgba(0,0,0,.18);
+  }
+
+  .menu-header {
+    background: #8e44ad; color: #fff; text-align: center;
+    padding: 14px 10px 12px; font-size: 32px;
+    letter-spacing: 1px; border-bottom: 6px solid #6c3295;
+  }
+  .menu-subtitle {
+    font-size: 15px; font-weight: normal; letter-spacing: 0;
+    margin-top: 4px; opacity: .92;
+  }
+
+  .week-of { text-align: center; margin: 12px 18px 0; font-size: 17px; color: #333; }
+  .week-of [contenteditable] {
+    display: inline-block; min-width: 230px;
+    border-bottom: 3px dotted #8e44ad;
+    padding: 0 10px 2px; outline: none;
+  }
+  .week-of [contenteditable]:focus { background: #fff3b0; border-radius: 6px 6px 0 0; }
+
+  /* ===== Week banners ===== */
+  .week-banner {
+    margin: 14px 18px 6px; color: #fff;
+    border-radius: 12px; padding: 8px 14px;
+    font-size: 20px; font-weight: bold;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .week-banner small { font-size: 12px; font-weight: normal; opacity: .9; }
+  .wk1 { background: #8e44ad; }
+  .wk2 { background: #2f6bbf; }
+
+  .menu table {
+    width: calc(100% - 36px); margin: 0 18px 8px;
+    border-collapse: separate; border-spacing: 4px;
+    table-layout: fixed;
+  }
+
+  .menu th {
+    color: #fff; padding: 8px 6px;
+    border-radius: 10px; font-size: 15px;
+  }
+  .menu th.time { font-size: 11px; display: block; font-weight: normal; opacity: .88; margin-top: 2px; }
+
+  .menu th.meal  { background: #8e44ad; }
+  .menu th.daycol { background: #f5c518; color: #5a4500; width: 64px; }
+
+  .menu td {
+    padding: 8px; border-radius: 10px;
+    font-size: 12px; vertical-align: top; line-height: 1.5;
+    color: #333; outline: none;
+    background: #f7edfb; /* light purple = home */
+  }
+  .menu td:focus { background: #fff9dd; box-shadow: 0 0 0 3px #8e44ad; }
+
+  .menu td.day {
+    color: #fff; font-weight: bold; font-size: 15px;
+    text-align: center; padding: 8px 2px;
+  }
+
+  .mon { background: #e74c3c; }
+  .tue { background: #e67e22; }
+  .wed { background: #f5c518; color: #5a4500; }
+  .thu { background: #27ae60; }
+  .fri { background: #3498db; }
+
+  .week-tip {
+    text-align: center; font-size: 12px; color: #555;
+    background: #fff3b0; margin: 0 18px 8px;
+    border-radius: 10px; padding: 7px 10px;
+  }
+  .footer-note { text-align: center; font-size: 13px; color: #7a6a1a; padding: 2px 10px 14px; }
+
+  /* ===== Print: one landscape page per week ===== */
+  @media print {
+    body { background: #fff; padding: 0; }
+    .toolbar, .footer-note { display: none; }
+    .menu { box-shadow: none; max-width: 100%; border-width: 4px; }
+    .menu-header { font-size: 24px; padding: 8px 8px 6px; }
+    .menu-subtitle { font-size: 11px; }
+    .week-of { font-size: 12px; margin-top: 6px; }
+    .week-banner { margin: 8px 14px 4px; font-size: 16px; padding: 5px 12px; }
+    .week-banner small { font-size: 10px; }
+    .menu table { margin: 0 14px 4px; width: calc(100% - 28px); border-spacing: 3px; }
+    .menu th { font-size: 12px; padding: 5px 4px; }
+    .menu th.time { font-size: 9px; }
+    .menu td { font-size: 9.5px; padding: 5px 6px; line-height: 1.35; }
+    .menu td.day { font-size: 12px; }
+    .week-tip { font-size: 9.5px; margin: 0 14px 6px; }
+    .week2 { break-after: auto; }
+    .week1 { break-after: page; }
+    @page { size: letter landscape; margin: 0.4in; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button onclick="window.print()">🖨️ Print Both Weeks</button>
+</div>
+
+<div class="menu">
+  <div class="menu-header">
+    🍽️ A Full Day of Eating 🏡
+    <div class="menu-subtitle">2-Week Rotation &nbsp;•&nbsp; Homeschool Edition &nbsp;•&nbsp; prints one page per week</div>
+  </div>
+
+  <div class="week-of">📅 Week 1 begins: <span contenteditable="true">____________________</span></div>
+
+  <!-- ================= WEEK 1 ================= -->
+  <div class="week1">
+    <div class="week-banner wk1">📅 Week 1 <small>banana muffin baking week 🧁</small></div>
+
+    <table>
+      <tr>
+        <th class="daycol">Day</th>
+        <th class="meal">🏠 Breakfast<span class="time">~7:00 AM</span></th>
+        <th class="meal">🏠 Morning Snack<span class="time">9:45</span></th>
+        <th class="meal">👩‍🍳 Lunch + Milk<span class="time">11:45 • cooked together at 11:15</span></th>
+        <th class="meal">🏠 Afternoon Snack<span class="time">2:30 • after quiet time</span></th>
+        <th class="meal">🏠 Dinner<span class="time">~5:00 PM</span></th>
+      </tr>
+
+      <tr>
+        <td class="day mon">Mon<br>☀️</td>
+        <td contenteditable="true">Warm oatmeal<br>• mashed banana<br>• milk</td>
+        <td contenteditable="true">Banana slices<br>• dry oat cereal</td>
+        <td contenteditable="true">Turkey &amp; cheese quesadilla strips<br>• carrot coins<br>• strawberries</td>
+        <td contenteditable="true">Greek yogurt<br>• halved blueberries</td>
+        <td contenteditable="true">Baked chicken tenders (soft)<br>• mashed sweet potato<br>• green beans</td>
+      </tr>
+
+      <tr>
+        <td class="day tue">Tue<br>🌤️</td>
+        <td contenteditable="true">Scrambled egg*<br>• toast strips<br>• melon</td>
+        <td contenteditable="true">Thin apple slices<br>• cream cheese dip</td>
+        <td contenteditable="true">Turkey meatballs (cut up)<br>• mac &amp; cheese<br>• broccoli • peaches</td>
+        <td contenteditable="true">Whole-grain crackers<br>• cheese cubes</td>
+        <td contenteditable="true">Soft tacos — shredded chicken<br>or beans • cheese • corn</td>
+      </tr>
+
+      <tr>
+        <td class="day wed">Wed<br>☁️</td>
+        <td contenteditable="true">Yogurt bowl<br>• soft berries<br>• dry cereal sprinkle</td>
+        <td contenteditable="true">🧁 What we baked this morning!<br>mini banana muffins (double<br>batch — save some for Friday) • milk</td>
+        <td contenteditable="true">Chicken veggie soup<br>• wheat roll • peas<br>• cantaloupe cubes</td>
+        <td contenteditable="true">Applesauce<br>• graham crackers</td>
+        <td contenteditable="true">Flaked white fish* or<br>tuna-melt strips • couscous • peas</td>
+      </tr>
+
+      <tr>
+        <td class="day thu">Thu<br>🌦️</td>
+        <td contenteditable="true">Mini pancakes 🥞 (from freezer)<br>• pear slices</td>
+        <td contenteditable="true">Toast strips<br>• butter or sunbutter*</td>
+        <td contenteditable="true">Pasta + marinara &amp; lentils<br>• zucchini coins<br>• pear slices</td>
+        <td contenteditable="true">Cottage cheese<br>• mandarin segments</td>
+        <td contenteditable="true">Tomato soup<br>• grilled cheese dippers<br>• fruit</td>
+      </tr>
+
+      <tr>
+        <td class="day fri">Fri<br>🌈</td>
+        <td contenteditable="true">Overnight oats or<br>banana–sunbutter* toast • milk</td>
+        <td contenteditable="true">Yogurt<br>• soft berries</td>
+        <td contenteditable="true">Scrambled eggs* or French toast<br>• sweet potato cubes<br>• quartered grapes 🍇</td>
+        <td contenteditable="true">Mini banana muffins<br>(from Wednesday's double batch) • milk</td>
+        <td contenteditable="true">🍕 Pita pizza night —<br>kids decorate! • cucumber stars • watermelon</td>
+      </tr>
+    </table>
+
+    <div class="week-tip">💡 Week 1 baking: mini banana muffins (Wed) — double batch covers Friday's snack too!</div>
+  </div>
+
+  <!-- ================= WEEK 2 ================= -->
+  <div class="week2">
+    <div class="week-banner wk2">📅 Week 2 <small>veggie-muffin baking week 🥕</small></div>
+
+    <table>
+      <tr>
+        <th class="daycol">Day</th>
+        <th class="meal">🏠 Breakfast<span class="time">~7:00 AM</span></th>
+        <th class="meal">🏠 Morning Snack<span class="time">9:45</span></th>
+        <th class="meal">👩‍🍳 Lunch + Milk<span class="time">11:45 • cooked together at 11:15</span></th>
+        <th class="meal">🏠 Afternoon Snack<span class="time">2:30 • after quiet time</span></th>
+        <th class="meal">🏠 Dinner<span class="time">~5:00 PM</span></th>
+      </tr>
+
+      <tr>
+        <td class="day mon">Mon<br>☀️</td>
+        <td contenteditable="true">Banana-oat smoothie<br>• toast strips</td>
+        <td contenteditable="true">Dry oat cereal<br>• milk</td>
+        <td contenteditable="true">🫘 Cheesy black-bean &amp; rice bowl<br>• corn • soft avocado cubes</td>
+        <td contenteditable="true">Cucumber wheels<br>• cream cheese dip</td>
+        <td contenteditable="true">Turkey meatloaf muffins (soft)<br>• mashed potatoes<br>• roasted carrot coins</td>
+      </tr>
+
+      <tr>
+        <td class="day tue">Tue<br>🌤️</td>
+        <td contenteditable="true">Berry yogurt parfait<br>• granola or cereal sprinkle</td>
+        <td contenteditable="true">Pear slices<br>• cheese cubes</td>
+        <td contenteditable="true">Chicken &amp; veggie fried rice<br>• edamame* • mandarin segments</td>
+        <td contenteditable="true">Nut-free "trail mix": cereal •<br>freeze-dried berries • yogurt bites</td>
+        <td contenteditable="true">Mini turkey burgers on soft buns<br>• potato wedges • peas</td>
+      </tr>
+
+      <tr>
+        <td class="day wed">Wed<br>☁️</td>
+        <td contenteditable="true">Waffles (from freezer)<br>• yogurt</td>
+        <td contenteditable="true">🧁 What we baked this morning!<br>applesauce-carrot muffins (double<br>batch — save some for Friday) • milk</td>
+        <td contenteditable="true">Turkey-veggie rice soup<br>• wheat roll • green beans<br>• melon cubes</td>
+        <td contenteditable="true">Rice cakes + cream cheese<br>• banana coins</td>
+        <td contenteditable="true">Baked salmon* (flaked, bones<br>checked) • couscous • soft broccoli</td>
+      </tr>
+
+      <tr>
+        <td class="day thu">Thu<br>🌦️</td>
+        <td contenteditable="true">Warm berry oatmeal</td>
+        <td contenteditable="true">Banana "sushi" 🍣 — sunbutter*<br>spread on tortilla, rolled &amp; sliced</td>
+        <td contenteditable="true">Cheesy veggie quesadilla<br>• refried beans • diced mango</td>
+        <td contenteditable="true">Fruit smoothie<br>(or frozen yogurt bark!)</td>
+        <td contenteditable="true">Chicken pot pie —<br>soft veggies inside! • fruit cup</td>
+      </tr>
+
+      <tr>
+        <td class="day fri">Fri<br>🌈</td>
+        <td contenteditable="true">French toast sticks + cinnamon<br>• melon</td>
+        <td contenteditable="true">Cottage cheese<br>• pineapple tidbits</td>
+        <td contenteditable="true">Turkey &amp; cheese roll-ups<br>• cucumber stars<br>• quartered grapes 🍇</td>
+        <td contenteditable="true">Applesauce-carrot muffins<br>(from Wednesday's double batch) • milk</td>
+        <td contenteditable="true">🥞 Breakfast-for-dinner!<br>pancakes + scrambled eggs* + berries</td>
+      </tr>
+    </table>
+
+    <div class="week-tip">💡 Week 2 baking: applesauce-carrot muffins (Wed) — the sneaky-veggie batch that covers Friday's snack!</div>
+  </div>
+
+  <div class="footer-note">💡 Tip: Click the dates or any meal box to edit before printing! Week 1 = page 1, Week 2 = page 2.</div>
+</div>
+
+</body>
+</html>

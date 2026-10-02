@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Homeschool Day – Age 3</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Comic Sans MS", "Segoe Print", "Chalkboard SE", Arial, sans-serif;
+    background: #ffe97a;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .toolbar { margin-bottom: 14px; }
+  .toolbar button {
+    font-family: inherit; font-size: 16px;
+    padding: 10px 22px; border: none; border-radius: 10px;
+    background: #2f6bbf; color: #fff; cursor: pointer;
+  }
+  .toolbar button:hover { background: #1d4d94; }
+
+  .chart {
+    width: 100%; max-width: 720px;
+    background: #fffbe0;
+    border: 6px solid #2f6bbf;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 6px 16px rgba(0,0,0,.18);
+  }
+
+  .chart-header {
+    background: #2f6bbf; color: #fff; text-align: center;
+    padding: 14px 10px 12px; font-size: 34px;
+    letter-spacing: 1px; border-bottom: 6px solid #1d4d94;
+  }
+  .chart-subtitle {
+    font-size: 15px; font-weight: normal; letter-spacing: 0;
+    margin-top: 4px; opacity: .92;
+  }
+
+  /* Theme of the week (click to type) */
+  .week-theme {
+    text-align: center; margin: 14px 18px 0;
+    font-size: 17px; color: #333;
+  }
+  .week-theme [contenteditable] {
+    display: inline-block; min-width: 200px;
+    border-bottom: 3px dotted #8e44ad;
+    padding: 0 10px 2px; outline: none; font-weight: bold; color: #5e3080;
+  }
+  .week-theme [contenteditable]:focus { background: #fff3b0; border-radius: 6px 6px 0 0; }
+
+  /* ===== Activity of the Day rotation strip ===== */
+  .rotation {
+    margin: 12px 18px 4px;
+    background: #ede3f5;
+    border: 3px dashed #8e44ad;
+    border-radius: 14px;
+    padding: 10px 10px 8px;
+    text-align: center;
+  }
+  .rotation-title { font-size: 15px; color: #5e3080; margin-bottom: 8px; }
+  .rot-days {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 6px;
+  }
+  .rot {
+    color: #fff; font-size: 13px; font-weight: bold;
+    border-radius: 999px; padding: 7px 12px;
+    outline: none;
+  }
+  .rot:focus { box-shadow: 0 0 0 3px #8e44ad; }
+  .rd-mon { background: #e74c3c; }
+  .rd-tue { background: #e67e22; }
+  .rd-wed { background: #f5c518; color: #5a4500; }
+  .rd-thu { background: #27ae60; }
+  .rd-fri { background: #3498db; }
+
+  .schedule { padding: 14px 18px 10px; }
+
+  /* ===== Activity cards ===== */
+  .activity {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 14px; border-radius: 14px;
+    margin-bottom: 9px; color: #fff;
+    position: relative; border: 3px solid rgba(0,0,0,.10);
+    cursor: pointer; transition: transform .1s;
+  }
+  .activity:hover { transform: scale(1.01); }
+
+  .activity .icon {
+    font-size: 24px; background: rgba(255,255,255,.92);
+    border-radius: 50%; width: 46px; height: 46px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .activity .text { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .activity .name { font-size: 20px; font-weight: bold; }
+  .activity .desc { font-size: 13px; opacity: .92; }
+
+  .activity .time {
+    font-size: 15px; font-weight: bold;
+    background: rgba(255,255,255,.85); color: #333;
+    padding: 4px 10px; border-radius: 999px;
+    white-space: nowrap; align-self: center;
+    outline: none; cursor: text;
+  }
+  .activity .time:focus { background: #fff3b0; box-shadow: 0 0 0 2px #2f6bbf; }
+
+  /* ===== Red "We are here" arrow ===== */
+  .activity.now { outline: 4px solid #e02b2b; }
+  .activity.now::after {
+    content: "➜";
+    position: absolute; left: -16px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 34px; color: #e02b2b;
+    text-shadow: 1px 1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, -1px -1px 0 #fff;
+    animation: nudge 1s ease-in-out infinite;
+  }
+  @keyframes nudge {
+    0%, 100% { transform: translateY(-50%) translateX(0); }
+    50%      { transform: translateY(-50%) translateX(-5px); }
+  }
+
+  /* ===== Card colors ===== */
+  .purple { background: #8e44ad; }
+  .blue   { background: #3498db; }
+  .green  { background: #27ae60; }
+  .orange { background: #e67e22; }
+  .red    { background: #e74c3c; }
+  .pink   { background: #fd79a8; }
+  .teal   { background: #17a2b8; }
+  .yellow { background: #f5c518; color: #5a4500; }
+
+  .footer-note {
+    text-align: center; font-size: 13px; color: #7a6a1a;
+    padding: 2px 10px 14px;
+  }
+
+  /* ===== Print styles: one page ===== */
+  @media print {
+    body { background: #fff; padding: 0; }
+    .toolbar, .footer-note { display: none; }
+    .chart { box-shadow: none; max-width: 100%; border-width: 4px; }
+    .chart-header { font-size: 24px; padding: 8px 8px 6px; }
+    .chart-subtitle { font-size: 11px; }
+    .week-theme { font-size: 13px; margin-top: 8px; }
+    .rotation { margin: 8px 14px 2px; padding: 6px 6px 5px; }
+    .rotation-title { font-size: 11px; margin-bottom: 5px; }
+    .rot { font-size: 10px; padding: 4px 9px; }
+    .schedule { padding: 8px 14px 4px; }
+    .activity { margin-bottom: 4px; padding: 3px 12px; border-radius: 10px; gap: 10px; }
+    .activity .icon { width: 28px; height: 28px; font-size: 15px; }
+    .activity .name { font-size: 13px; }
+    .activity .desc { font-size: 9px; }
+    .activity .time { font-size: 10px; padding: 2px 7px; }
+    .activity.now::after { animation: none; font-size: 20px; left: -11px; }
+    .activity:hover { transform: none; }
+    @page { margin: 0.4in; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button onclick="window.print()">🖨️ Print Our Day</button>
+</div>
+
+<div class="chart">
+  <div class="chart-header">
+    🏡 Our Homeschool Day 🌈
+    <div class="chart-subtitle">Age 3 &nbsp;•&nbsp; Play-Based &nbsp;•&nbsp; 7:00 AM – 7:30 PM</div>
+  </div>
+
+  <div class="week-theme">🌟 Theme of the week: <span contenteditable="true">farm animals</span></div>
+
+  <!-- Weekly rotation — click any pill to customize -->
+  <div class="rotation">
+    <div class="rotation-title">🎨 Activity of the Day &nbsp;(9:05 – 9:45)</div>
+    <div class="rot-days">
+      <span class="rot rd-mon" contenteditable="true">🎨 Mon · Art</span>
+      <span class="rot rd-tue" contenteditable="true">🧪 Tue · Sensory</span>
+      <span class="rot rd-wed" contenteditable="true">🧁 Wed · Baking</span>
+      <span class="rot rd-thu" contenteditable="true">🌿 Thu · Nature</span>
+      <span class="rot rd-fri" contenteditable="true">🎵 Fri · Music</span>
+    </div>
+  </div>
+
+  <div class="schedule">
+
+    <!-- Arrow starts here — click any card to move it -->
+    <div class="activity yellow now">
+      <span class="icon">🌅</span>
+      <span class="text">
+        <span class="name">Wake Up &amp; Breakfast</span>
+        <span class="desc">Potty first, then breakfast together</span>
+      </span>
+      <span class="time" contenteditable="true">7:00 – 7:30</span>
+    </div>
+
+    <div class="activity purple">
+      <span class="icon">👕</span>
+      <span class="text">
+        <span class="name">Get Dressed + Toddler Jobs</span>
+        <span class="desc">Feed the pet, sort laundry — this IS school!</span>
+      </span>
+      <span class="time" contenteditable="true">7:30 – 8:00</span>
+    </div>
+
+    <div class="activity green">
+      <span class="icon">🧩</span>
+      <span class="text">
+        <span class="name">Independent Play</span>
+        <span class="desc">The homeschool survival skill — parent tidies &amp; preps</span>
+      </span>
+      <span class="time" contenteditable="true">8:00 – 8:45</span>
+    </div>
+
+    <div class="activity blue">
+      <span class="icon">⭕</span>
+      <span class="text">
+        <span class="name">Tot School Time</span>
+        <span class="desc">15–20 min: songs, weather window, one book</span>
+      </span>
+      <span class="time" contenteditable="true">8:45 – 9:05</span>
+    </div>
+
+    <div class="activity orange">
+      <span class="icon">🎨</span>
+      <span class="text">
+        <span class="name">Activity of the Day</span>
+        <span class="desc">Check today's theme in the rainbow bar above ⬆</span>
+      </span>
+      <span class="time" contenteditable="true">9:05 – 9:45</span>
+    </div>
+
+    <div class="activity yellow">
+      <span class="icon">🍎</span>
+      <span class="text">
+        <span class="name">Snack</span>
+        <span class="desc">Refuel for outside time</span>
+      </span>
+      <span class="time" contenteditable="true">9:45 – 10:00</span>
+    </div>
+
+    <div class="activity red">
+      <span class="icon">🌳</span>
+      <span class="text">
+        <span class="name">Outside Time #1</span>
+        <span class="desc">Backyard, park or walk — big movement!</span>
+      </span>
+      <span class="time" contenteditable="true">10:00 – 11:15</span>
+    </div>
+
+    <div class="activity teal">
+      <span class="icon">🥣</span>
+      <span class="text">
+        <span class="name">Cook Lunch Together</span>
+        <span class="desc">Stirring &amp; pouring = practical life skills</span>
+      </span>
+      <span class="time" contenteditable="true">11:15 – 11:45</span>
+    </div>
+
+    <div class="activity yellow">
+      <span class="icon">🥪</span>
+      <span class="text">
+        <span class="name">Lunch</span>
+        <span class="desc">Family mealtime</span>
+      </span>
+      <span class="time" contenteditable="true">11:45 – 12:15</span>
+    </div>
+
+    <div class="activity blue">
+      <span class="icon">📚</span>
+      <span class="text">
+        <span class="name">Wind-Down</span>
+        <span class="desc">Books, dim lights, potty</span>
+      </span>
+      <span class="time" contenteditable="true">12:15 – 12:30</span>
+    </div>
+
+    <div class="activity pink">
+      <span class="icon">😴</span>
+      <span class="text">
+        <span class="name">Nap / Quiet Time</span>
+        <span class="desc">Sleep… or quiet books when naps end — this block STAYS!</span>
+      </span>
+      <span class="time" contenteditable="true">12:30 – 2:30</span>
+    </div>
+
+    <div class="activity yellow">
+      <span class="icon">🧸</span>
+      <span class="text">
+        <span class="name">Slow Wake-Up + Snack</span>
+        <span class="desc">Gentle start to the afternoon</span>
+      </span>
+      <span class="time" contenteditable="true">2:30 – 2:50</span>
+    </div>
+
+    <div class="activity red">
+      <span class="icon">🚗</span>
+      <span class="text">
+        <span class="name">Out &amp; About</span>
+        <span class="desc">Storytime, playdates, park #2, errands</span>
+      </span>
+      <span class="time" contenteditable="true">2:50 – 4:00</span>
+    </div>
+
+    <div class="activity green">
+      <span class="icon">🧩</span>
+      <span class="text">
+        <span class="name">Free Play</span>
+        <span class="desc">While parent preps dinner</span>
+      </span>
+      <span class="time" contenteditable="true">4:00 – 5:00</span>
+    </div>
+
+    <div class="activity yellow">
+      <span class="icon">🍽️</span>
+      <span class="text">
+        <span class="name">Dinner</span>
+        <span class="desc">Early bird special — no commute!</span>
+      </span>
+      <span class="time" contenteditable="true">5:00 – 5:30</span>
+    </div>
+
+    <div class="activity teal">
+      <span class="icon">🧺</span>
+      <span class="text">
+        <span class="name">Tidy-Up + Bath</span>
+        <span class="desc">Family clean-up, then splish-splash</span>
+      </span>
+      <span class="time" contenteditable="true">5:30 – 6:15</span>
+    </div>
+
+    <div class="activity purple">
+      <span class="icon">📖</span>
+      <span class="text">
+        <span class="name">Milk, Books &amp; Cuddles</span>
+        <span class="desc">Calm connection before bed</span>
+      </span>
+      <span class="time" contenteditable="true">6:15 – 7:00</span>
+    </div>
+
+    <div class="activity pink">
+      <span class="icon">🌙</span>
+      <span class="text">
+        <span class="name">Bedtime</span>
+        <span class="desc">Same time every night 💤</span>
+      </span>
+      <span class="time" contenteditable="true">7:00 – 7:30</span>
+    </div>
+
+  </div>
+
+  <div class="footer-note">💡 Click any time to edit it • Click a card to move the arrow • Ctrl+S to save your edits!</div>
+</div>
+
+<script>
+  // Move the red arrow — but NOT when clicking to edit a time or pill
+  document.querySelectorAll(".activity").forEach(card => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest('[contenteditable]')) return;
+      document.querySelectorAll(".activity").forEach(c => c.classList.remove("now"));
+      card.classList.add("now");
+    });
+  });
+</script>
+
+</body>
+</html>

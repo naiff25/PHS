@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grocery List – 2-Week Rotation</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Comic Sans MS", "Segoe Print", "Chalkboard SE", Arial, sans-serif;
+    background: #ffe97a;
+    padding: 20px;
+    display: flex; flex-direction: column; align-items: center;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .toolbar { margin-bottom: 14px; display: flex; gap: 10px; }
+  .toolbar button {
+    font-family: inherit; font-size: 15px;
+    padding: 10px 20px; border: none; border-radius: 10px;
+    background: #27ae60; color: #fff; cursor: pointer;
+  }
+  .toolbar button:hover { background: #1e8449; }
+  .toolbar button.gray { background: #7f8c8d; }
+  .toolbar button.gray:hover { background: #5f6a6b; }
+
+  .list {
+    width: 100%; max-width: 820px;
+    background: #fffbe0;
+    border: 6px solid #27ae60;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 6px 16px rgba(0,0,0,.18);
+  }
+
+  .list-header {
+    background: #27ae60; color: #fff; text-align: center;
+    padding: 14px 10px 12px; font-size: 32px;
+    letter-spacing: 1px; border-bottom: 6px solid #1e8449;
+  }
+  .list-subtitle {
+    font-size: 14px; font-weight: normal; letter-spacing: 0;
+    margin-top: 4px; opacity: .92;
+  }
+
+  .legend {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+    margin: 12px 18px 4px; font-size: 12.5px;
+  }
+  .legend span { background: #fff; border-radius: 999px; padding: 5px 12px; color: #444; }
+  .legend .tag { margin-right: 5px; }
+
+  .tag {
+    display: inline-block; font-size: 10px; font-weight: bold;
+    border-radius: 999px; padding: 2px 8px; color: #fff; white-space: nowrap;
+  }
+  .tw1 { background: #e67e22; }
+  .tw2 { background: #3498db; }
+  .tboth { background: #27ae60; }
+
+  .columns {
+    columns: 2; column-gap: 22px;
+    padding: 10px 18px 6px;
+  }
+
+  .section {
+    break-inside: avoid;
+    margin-bottom: 12px;
+  }
+  .section h3 {
+    font-size: 16px; color: #fff;
+    border-radius: 10px; padding: 6px 10px; margin-bottom: 6px;
+  }
+  .s-prod  { background: #27ae60; }
+  .s-dairy { background: #2f6bbf; }
+  .s-meat  { background: #e74c3c; }
+  .s-pantry{ background: #e67e22; }
+  .s-frozen{ background: #17a2b8; }
+
+  .item {
+    display: flex; align-items: center; gap: 7px;
+    background: #fff; border-radius: 8px;
+    padding: 4px 8px; margin-bottom: 3px;
+    font-size: 12.5px; color: #333; cursor: pointer;
+    user-select: none;
+  }
+  .item .box { font-size: 14px; width: 18px; flex-shrink: 0; }
+  .item .box::before { content: "☐"; }
+  .item.checked .box::before { content: "✅"; }
+  .item .name { flex: 1; min-width: 0; }
+  .item .qty { font-size: 10.5px; color: #888; white-space: nowrap; }
+  .item .tag { flex-shrink: 0; }
+  .item.checked .name { text-decoration: line-through; opacity: .5; }
+  .item.checked .qty { opacity: .5; }
+  .item:hover { background: #f2ffd9; }
+
+  .footer-note { text-align: center; font-size: 12.5px; color: #7a6a1a; padding: 2px 10px 12px; }
+
+  /* ===== Print: one portrait page ===== */
+  @media print {
+    body { background: #fff; padding: 0; }
+    .toolbar, .footer-note { display: none; }
+    .list { box-shadow: none; max-width: 100%; border-width: 4px; }
+    .list-header { font-size: 24px; padding: 8px; }
+    .list-subtitle { font-size: 11px; }
+    .legend { font-size: 10px; margin: 8px 14px 2px; }
+    .columns { columns: 2; padding: 6px 14px 4px; column-gap: 16px; }
+    .section h3 { font-size: 12px; padding: 4px 8px; margin-bottom: 4px; }
+    .item { font-size: 9.5px; padding: 2px 6px; margin-bottom: 2px; border-radius: 6px; }
+    .item .box { font-size: 11px; width: 14px; }
+    .item .qty { font-size: 8.5px; }
+    .tag { font-size: 8px; padding: 1px 6px; }
+    @page { margin: 0.45in; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button onclick="window.print()">🖨️ Print List</button>
+  <button class="gray" id="resetBtn">🔄 Reset Checks</button>
+</div>
+
+<div class="list">
+  <div class="list-header">
+    🛒 Grocery List
+    <div class="list-subtitle">matches the 2-week menu &nbsp;•&nbsp; quantities ≈ family of 3–4 with leftovers — adjust to your eater!</div>
+  </div>
+
+  <div class="legend">
+    <span><em class="tag tw1">W1</em> week 1 only</span>
+    <span><em class="tag tw2">W2</em> week 2 only</span>
+    <span><em class="tag tboth">W1+W2</em> both weeks</span>
+  </div>
+
+  <div class="columns">
+
+    <div class="section">
+      <h3 class="s-prod">🥬 Fresh Produce</h3>
+      <div class="item"><span class="box"></span><span class="name">Bananas</span><span class="qty">6–8</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Berries, fresh or frozen</span><span class="qty">2 pkgs</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Melon or cantaloupe</span><span class="qty">1</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Cucumbers</span><span class="qty">2</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Carrots</span><span class="qty">1 lb</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Broccoli</span><span class="qty">2 crowns</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Green beans</span><span class="qty">1 bag</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Celery + onion (soups)</span><span class="qty">1 each</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Grapes</span><span class="qty">small bunch 🍇</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Mandarins</span><span class="qty">bag</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Apples</span><span class="qty">3–4</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Peaches (or canned in juice)</span><span class="qty">2</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Strawberries</span><span class="qty">1 pkg</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Zucchini</span><span class="qty">2</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Sweet potatoes</span><span class="qty">2–3</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Pears</span><span class="qty">3–4</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Watermelon</span><span class="qty">small</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Avocados</span><span class="qty">1–2</span><em class="tag tw2">W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Mango</span><span class="qty">1</span><em class="tag tw2">W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Pineapple tidbits (canned ok)</span><span class="qty">1</span><em class="tag tw2">W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Potatoes</span><span class="qty">3–4</span><em class="tag tw2">W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Baby spinach (smoothie boost)</span><span class="qty">optional</span><em class="tag tw2">W2</em></div>
+    </div>
+
+    <div class="section">
+      <h3 class="s-dairy">🥛 Dairy &amp; Eggs</h3>
+      <div class="item"><span class="box"></span><span class="name">Whole milk</span><span class="qty">1–2 gal</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Greek yogurt, big tub</span><span class="qty">1</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Yogurt + tubes</span><span class="qty">as needed</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Butter</span><span class="qty">1</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Cream cheese</span><span class="qty">1–2</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Shredded cheese</span><span class="qty">2 bags</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Block cheese (cubes/slices)</span><span class="qty">1</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Cottage cheese</span><span class="qty">2 cups</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Eggs*</span><span class="qty">1½–2 doz</span><em class="tag tboth">W1+W2</em></div>
+    </div>
+
+    <div class="section">
+      <h3 class="s-meat">🍗 Meat &amp; Fish</h3>
+      <div class="item"><span class="box"></span><span class="name">Deli turkey</span><span class="qty">½ lb</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Ground turkey</span><span class="qty">1½–2 lb</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Chicken (tenders or breast)</span><span class="qty">~2 lb</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">White fish fillet</span><span class="qty">1</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Salmon fillet</span><span class="qty">1</span><em class="tag tw2">W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Canned tuna*</span><span class="qty">1–2</span><em class="tag tw1">W1</em></div>
+    </div>
+
+    <div class="section">
+      <h3 class="s-pantry">🥫 Pantry &amp; Dry Goods</h3>
+      <div class="item"><span class="box"></span><span class="name">Old-fashioned oats</span><span class="qty">canister</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Dry oat cereal / Os</span><span class="qty">1 box</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Whole-wheat bread</span><span class="qty">1–2 loaves</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Soft flour tortillas</span><span class="qty">1 pk</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Wheat rolls</span><span class="qty">pk</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Rice</span><span class="qty">bag</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Couscous</span><span class="qty">box</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Broth, chicken or veggie</span><span class="qty">2–3 cartons</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Breadcrumbs</span><span class="qty">or make from bread ends</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Baking: flour, sugar, baking<br>&nbsp;&nbsp;&nbsp;&nbsp;powder, cinnamon, vanilla</span><span class="qty">check stock</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Sunbutter*</span><span class="qty">1 jar</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Maple syrup</span><span class="qty">1</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Applesauce cups</span><span class="qty">4–6 (some for baking!)</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Pasta (macaroni + fun shapes)</span><span class="qty">2 boxes</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Lentils</span><span class="qty">bag/can</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Crushed tomatoes + tomato soup</span><span class="qty">2 cans</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Graham crackers</span><span class="qty">box</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Whole-grain crackers</span><span class="qty">box</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Pitas</span><span class="qty">1 pk</span><em class="tag tw1">W1</em></div>
+      <div class="item"><span class="box"></span><span class="name">Black beans, canned</span><span class="qty">1–2</span><em class="tag tw2">W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Refried beans, canned</span><span class="qty">1–2</span><em class="tag tw2">W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Rice cakes</span><span class="qty">1 pk</span><em class="tag tw2">W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Freeze-dried berries + yogurt bites</span><span class="qty">1 each</span><em class="tag tw2">W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Pie crust / puff pastry</span><span class="qty">1</span><em class="tag tw2">W2</em></div>
+    </div>
+
+    <div class="section">
+      <h3 class="s-frozen">🧊 Frozen</h3>
+      <div class="item"><span class="box"></span><span class="name">Mixed berries</span><span class="qty">1–2 bags</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Peas</span><span class="qty">1 bag</span><em class="tag tboth">W1+W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Mixed vegetables</span><span class="qty">1 bag</span><em class="tag tw2">W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Edamame*</span><span class="qty">1 bag</span><em class="tag tw2">W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Waffles (or homemade batch)</span><span class="qty">1 box</span><em class="tag tw2">W2</em></div>
+      <div class="item"><span class="box"></span><span class="name">Fish sticks (easy backup)</span><span class="qty">optional</span><em class="tag tw2">W2</em></div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">💡 Click items to check them off — perfect for shopping from your phone!</div>
+</div>
+
+<script>
+  // Tap an item to check it off
+  document.querySelectorAll(".item").forEach(item => {
+    item.addEventListener("click", () => item.classList.toggle("checked"));
+  });
+
+  // Reset all checkmarks
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    document.querySelectorAll(".item.checked").forEach(i => i.classList.remove("checked"));
+  });
+</script>
+
+</body>
+</html>
